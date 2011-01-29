@@ -1,0 +1,82 @@
+#!/bin/bash
+
+# *********************************************************************
+# This script assumes .bashrc is in the form used by Debian and Ubuntu.
+# It has only been tested on these, and I'm sure it would muck up
+# your .bashrc if you run it on a non-Debian system.
+# 
+# This script installs rvm, 
+# then modifies the user's .bashrc
+#
+# Run this as a normal user.
+# *********************************************************************
+
+# If this script is run as a standalone script, uncomment this line
+# USERHOMEDIR="/home/$USER"
+
+
+# .bashrc has to be modified for rvm.
+# Only modify the file if it hasn't already been modified
+# So, first check if it contains a mention of this script
+modify_bashrc()
+{
+	# Check .bashrc for mention of "install_rvm"
+	if ! grep install_rvm $USERHOMEDIR/.bashrc
+	then
+		sed  's/^\[.*return$/if [[ -n "\$PS1" ]] ; then/g' $USERHOMEDIR/.bashrc > $USERHOMEDIR/bashrc_tmp.tmp
+		echo '' >> $USERHOMEDIR/bashrc_tmp.tmp
+		echo '# The following lines were added by install_rvm' >> $USERHOMEDIR/bashrc_tmp.tmp
+		echo 'fi' >> $USERHOMEDIR/bashrc_tmp.tmp
+		echo '[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"  # This loads RVM into a shell session.'  >> $USERHOMEDIR/bashrc_tmp.tmp
+		rm -f $USERHOMEDIR/.bashrc
+		mv $USERHOMEDIR/bashrc_tmp.tmp $USERHOMEDIR/.bashrc
+	else
+		echo 'It looks like install_rvm has already modified .bashrc, so nothing was changed.'
+	fi
+}
+
+# Install rvm
+installrvm() 
+{
+  cd $USERHOMEDIR
+
+	# The next line doesn't work for me, for some reason, on this system
+	#   bash < <( curl http://rvm.beginrescueend.com/releases/rvm-install-head )
+
+	# So, break it up into its parts, and run them:
+	# first, download the install script
+	curl http://rvm.beginrescueend.com/releases/rvm-install-head > $USERHOMEDIR/rvm-install-head
+	# Then run it
+	chmod +x $USERHOMEDIR/rvm-install-head
+	$USERHOMEDIR/rvm-install-head
+	# Then delete it
+	rm -f $USERHOMEDIR/rvm-install-head
+
+	# We've got rvm. Now load it.
+	source $USERHOMEDIR/.rvm/scripts/rvm
+	# rvm install ruby-1.9.2-head
+	rvm install ree-1.8.7
+
+	rvm --default use ree-1.8.7
+	rvm use ree-1.8.7
+	rvm gemset use global
+	gem install bundler
+}
+
+# Check if rvm is already installed. 
+# If not, install it
+install_if_necessary()
+{
+if [ -d $USERHOMEDIR/.rvm ] 
+then 
+	echo "rvm exists, so the script didn't run."
+else
+	installrvm
+	echo "Remember to log out and back in before using rvm"
+fi
+}
+
+
+# Now run the script
+install_if_necessary
+modify_bashrc
