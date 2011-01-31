@@ -4,15 +4,36 @@
 # This script assumes .bashrc is in the form used by Debian and Ubuntu.
 # It has only been tested on these, and I'm sure it would muck up
 # your .bashrc if you run it on a non-Debian system.
+# It also runs aptitude, which would (obviously) cause problems on a 
+# non-debian system.
 # 
-# This script installs rvm, 
-# then modifies the user's .bashrc
+# 
+# This script:
+#   installs the prerequisites for compiling Ruby (if needed)
+#   then installs Ruby
+#   Then installs rvm
+#   then modifies the user's .bashrc
+# 
+# Okay, that's not saying much. rvm is easy enough to install on your own.
+# But it's nice to have a script do it for you and take care of modifying
+# .bashrc.
 #
 # Run this as a normal user.
+# If this is run as a standalone script, the sudo line below
+# may prompt for your password.
 # *********************************************************************
 
-# If this script is run as a standalone script, uncomment this line
-# USERHOMEDIR="/home/$USER"
+
+# If we're running this as a standalone script (that is, if we're 
+# not running it from the install_og scripts), then
+# the variable USERHOMEDIR won't be defined.
+# In that case, define it, and install rvm's prerequisites.
+if [ -z $USERHOMEDIR ]
+then
+  USERHOMEDIR="/home/$USER"
+  sudo aptitude install build-essential bison openssl libreadline6 libreadline6-dev curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev libxslt-dev autoconf libc6-dev
+fi
+
 
 
 # .bashrc has to be modified for rvm.
@@ -40,6 +61,7 @@ installrvm()
 {
   cd $USERHOMEDIR
 
+
 	# The next line doesn't work for me, for some reason, on this system
 	#   bash < <( curl http://rvm.beginrescueend.com/releases/rvm-install-head )
 
@@ -54,11 +76,15 @@ installrvm()
 
 	# We've got rvm. Now load it.
 	source $USERHOMEDIR/.rvm/scripts/rvm
-	# rvm install ruby-1.9.2-head
-	rvm install ree-1.8.7
 
+	# rvm install ruby-1.9.2-head
+	# rvm --default use ruby-1.9.2-head
+	# rvm use ruby-1.9.2-head
+
+	rvm install ree-1.8.7
 	rvm --default use ree-1.8.7
 	rvm use ree-1.8.7
+
 	rvm gemset use global
 	gem install bundler
 }

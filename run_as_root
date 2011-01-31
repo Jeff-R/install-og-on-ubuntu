@@ -2,6 +2,9 @@
 
 # To use this script:
 # Update the default values below with any changes you want.
+# If you are cloning a read-write copy of the og database, make sure that
+# you have given github your ssh key before starting the script.
+# 
 # Then run this script, as root, from the script's directory, as "./run_as_root"
 #
 # when the script is done, you will need to set config/database.yml and config/api_keys.yml.
