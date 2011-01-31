@@ -39,6 +39,8 @@ fi
 # .bashrc has to be modified for rvm.
 # Only modify the file if it hasn't already been modified
 # So, first check if it contains a mention of this script
+# This should only run if install_if_necessary doesn't see
+# and existing rvm ... but it doesn't hurt to make sure.
 modify_bashrc()
 {
 	# Check .bashrc for mention of "install_rvm"
@@ -98,6 +100,7 @@ then
 	echo "rvm exists, so the script didn't run."
 else
 	installrvm
+  modify_bashrc
 	echo "Remember to log out and back in before using rvm"
 fi
 }
@@ -105,4 +108,3 @@ fi
 
 # Now run the script
 install_if_necessary
-modify_bashrc
