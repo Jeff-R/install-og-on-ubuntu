@@ -18,16 +18,15 @@ E_NOREPO=67
 if [ "$UID" -eq "$ROOT_UID" ]
 then
   echo "This script must not be run as root." 
-  exit E_WRONG_USER
+  exit $E_WRONG_USER
 fi
 
 
 # We need to know what repo to clone;
 # The parent script, if any, will set GITREPO.
 # Otherwise, if we're a standalone script, set it to $1.
-if [ -n $GITREPO ]
+if [ -z $GITREPO ]
 then
-  echo "first arg is $1"
   if [ -z "$1" ]
   then
     echo "Usage: $0 git-repo-to-clone"

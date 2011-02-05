@@ -31,26 +31,31 @@ setup_mongodb()
 # Then update tomcat's config file 
 setup_geoserver_ubuntu10()
 {
-  cd /var/lib/tomcat6/webapps
+  if [ ! -d /var/lib/tomcat6/webapps/geoserver ]
+  then
+    cd /var/lib/tomcat6/webapps
 
-  # Fetch and unzip
-  sudo -u tomcat6 wget 'http://downloads.sourceforge.net/geoserver/geoserver-2.0.2-war.zip'
-  sudo -u tomcat6 unzip geoserver-2.0.2-war.zip && rm geoserver-2.0.2-war.zip
+    # Fetch and unzip
+    sudo -u tomcat6 wget 'http://downloads.sourceforge.net/geoserver/geoserver-2.0.2-war.zip'
+    sudo -u tomcat6 unzip geoserver-2.0.2-war.zip && rm geoserver-2.0.2-war.zip
 
-  # Update the /etc/default/tomcat6 config file
-  # Use sed to change the config file's line containing JAVA_OPS. The resulting line wll be:
-  # JAVA_OPS="-jvm server -Djava.awt.headless=true -Xmx256M"
-  sed 's/^JAVA_OPS.*/JAVA_OPS="-jvm server -Djava.awt.headless=true -Xmx256M"/' /etc/default/tomcat6 > tmp.tmp
-  rm -f /etc/default/tomcat6
-  mv tmp.tmp /etc/default/tomcat6
+    # Update the /etc/default/tomcat6 config file
+    # Use sed to change the config file's line containing JAVA_OPS. The resulting line wll be:
+    # JAVA_OPS="-jvm server -Djava.awt.headless=true -Xmx256M"
+    sed 's/^JAVA_OPS.*/JAVA_OPS="-jvm server -Djava.awt.headless=true -Xmx256M"/' /etc/default/tomcat6 > tmp.tmp
+    rm -f /etc/default/tomcat6
+    mv tmp.tmp /etc/default/tomcat6
 
-  # Restart Tomcat
-  service tomcat6 restart
+    # Restart Tomcat
+    service tomcat6 restart
+  fi
 }
 
 # Packages. Lots of packages.
 install_packages_ubuntu10()
 {
+	# apt-get -y install debian-archive-keyring
+	# apt-get update
 	apt-get -y install build-essential bison openssl libreadline6 libreadline6-dev curl git 
 	apt-get -y install zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev 
 	apt-get -y install libxslt1-dev autoconf libc6-dev
@@ -62,6 +67,7 @@ install_packages_ubuntu10()
 	apt-get -y install libffi-ruby
 	apt-get -y install unzip
 	apt-get -y install sudo
+  # Mongo isn't coming in
 	apt-get -y install mongodb-stable
 	apt-get -y install java-common default-jre-headless 
 	apt-get -y install tomcat6
