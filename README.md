@@ -1,3 +1,7 @@
+The main repository for this project has moved; its current home is now [under the opengovernment github account](https://github.com/opengovernment/opengovernment-install). It makes much more sense for it to live there.
+
+I'm leaving this old copy of the repository here, but you should use that one instead of this.
+
 install_og is a set of scripts to install a development instance of [opengovernment.org](https://github.com/opengovernment/opengovernment) on Ubuntu. The scripts should work with just a bit of adjusting on Debian.
 
 Why? It takes a number of steps to set up the site. And it bugs me to type the same things over and over. And I'm hoping that this will help other people install the site quickly.
